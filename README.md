@@ -2,7 +2,7 @@
 
 Kumpulan alat kecil sehari-hari, dirakit jadi satu situs portofolio. Tidak ada akun, tidak ada server backend — setiap alat berjalan sepenuhnya di browser.
 
-**🔗 Demo langsung:** `https://username.github.io/nama-repo/` *(ganti dengan link GitHub Pages-mu setelah deploy)*
+**🔗 Demo langsung:** `https://Hafizh2006.github.io/Toolkit/`
 
 ## Tentang proyek ini
 
