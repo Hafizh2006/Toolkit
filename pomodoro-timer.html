@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pomodoro Timer — Toolkit</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  :root { --accent: var(--orange); }
+
+  .tool-head { padding: 40px 0 28px; border-bottom: 1px solid var(--line); }
+  .tool-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px;
+  }
+  .tool-tag::before { content:''; width: 8px; height: 8px; background: var(--accent); border-radius: 2px; }
+  .tool-head h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.4rem); margin: 0 0 8px; letter-spacing: -0.01em; }
+  .tool-head p { color: var(--ink-soft); margin: 0; max-width: 50ch; }
+
+  .tool-body {
+    padding: 56px 0 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mode-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .mode-tabs button {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: all 0.15s;
+  }
+  .mode-tabs button.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .ring-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin-bottom: 40px;
+  }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--paper-card); stroke-width: 10; }
+  .ring-fg {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s linear;
+  }
+  .ring-center {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .ring-time {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .ring-label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+  }
+  .controls button {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    padding: 13px 28px;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+  #startPauseBtn {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    min-width: 140px;
+  }
+  #startPauseBtn:hover { background: #36352f; }
+  #resetBtn:hover { border-color: var(--ink); }
+
+  .session-count {
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand"><span class="brand-mark"></span>Toolkit</a>
+    <a href="index.html" class="nav-back">&larr; Semua panel</a>
+  </div>
+</nav>
+
+<div class="shell">
+
+  <header class="tool-head">
+    <span class="tool-tag">Panel 04 — Produktivitas</span>
+    <h1>Pomodoro Timer</h1>
+    <p>Fokus 25 menit, istirahat 5 menit. Cincin di bawah menunjukkan sisa waktu secara visual — tab browser tetap bisa kamu tinggal, bunyi akan muncul saat waktunya selesai.</p>
+  </header>
+
+  <section class="tool-body">
+
+    <div class="mode-tabs">
+      <button class="active" data-mode="focus" data-mins="25">Fokus · 25m</button>
+      <button data-mode="short" data-mins="5">Istirahat pendek · 5m</button>
+      <button data-mode="long" data-mins="15">Istirahat panjang · 15m</button>
+    </div>
+
+    <div class="ring-wrap">
+      <svg width="280" height="280" viewBox="0 0 280 280">
+        <circle class="ring-bg" cx="140" cy="140" r="120"></circle>
+        <circle class="ring-fg" id="ringFg" cx="140" cy="140" r="120"></circle>
+      </svg>
+      <div class="ring-center">
+        <span class="ring-time" id="timeDisplay">25:00</span>
+        <span class="ring-label" id="modeLabel">Fokus</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="startPauseBtn">Mulai</button>
+      <button id="resetBtn">Atur ulang</button>
+    </div>
+
+    <div class="session-count" id="sessionCount">0 sesi fokus selesai hari ini</div>
+
+  </section>
+</div>
+
+<footer class="site-footer">
+  <div class="shell">
+    <span>Panel 04 / 04</span>
+    <a href="index.html" style="text-decoration:none; color:inherit;">Kembali ke Toolkit</a>
+  </div>
+</footer>
+
+<script>
+const RADIUS = 120;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+const ringFg = document.getElementById('ringFg');
+ringFg.style.strokeDasharray = `${CIRCUMFERENCE} ${CIRCUMFERENCE}`;
+
+let totalSeconds = 25 * 60;
+let remaining = totalSeconds;
+let isRunning = false;
+let intervalId = null;
+let completedSessions = 0;
+let currentMode = 'focus';
+
+const timeDisplay = document.getElementById('timeDisplay');
+const modeLabel = document.getElementById('modeLabel');
+const startPauseBtn = document.getElementById('startPauseBtn');
+const resetBtn = document.getElementById('resetBtn');
+const sessionCount = document.getElementById('sessionCount');
+
+const MODE_LABELS = { focus: 'Fokus', short: 'Istirahat pendek', long: 'Istirahat panjang' };
+
+function formatTime(s) {
+  const m = Math.floor(s / 60).toString().padStart(2, '0');
+  const sec = (s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+function updateRing() {
+  const fraction = remaining / totalSeconds;
+  const offset = CIRCUMFERENCE * (1 - fraction);
+  ringFg.style.strokeDashoffset = offset;
+}
+
+function tick() {
+  remaining--;
+  if (remaining <= 0) {
+    clearInterval(intervalId);
+    isRunning = false;
+    startPauseBtn.textContent = 'Mulai';
+    if (currentMode === 'focus') {
+      completedSessions++;
+      sessionCount.textContent = `${completedSessions} sesi fokus selesai hari ini`;
+    }
+    playChime();
+    remaining = 0;
+  }
+  timeDisplay.textContent = formatTime(remaining);
+  updateRing();
+}
+
+function playChime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 660;
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.8);
+  } catch (e) { /* audio tidak tersedia, abaikan */ }
+}
+
+startPauseBtn.addEventListener('click', () => {
+  if (isRunning) {
+    clearInterval(intervalId);
+    isRunning = false;
+    startPauseBtn.textContent = 'Lanjut';
+  } else {
+    isRunning = true;
+    startPauseBtn.textContent = 'Pause';
+    intervalId = setInterval(tick, 1000);
+  }
+});
+
+resetBtn.addEventListener('click', () => {
+  clearInterval(intervalId);
+  isRunning = false;
+  remaining = totalSeconds;
+  timeDisplay.textContent = formatTime(remaining);
+  startPauseBtn.textContent = 'Mulai';
+  updateRing();
+});
+
+document.querySelectorAll('.mode-tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    totalSeconds = parseInt(btn.dataset.mins) * 60;
+    remaining = totalSeconds;
+    clearInterval(intervalId);
+    isRunning = false;
+    startPauseBtn.textContent = 'Mulai';
+    modeLabel.textContent = MODE_LABELS[currentMode];
+    timeDisplay.textContent = formatTime(remaining);
+    updateRing();
+  });
+});
+
+updateRing();
+</script>
+
+</body>
+</html>

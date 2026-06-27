@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolkit — kumpulan alat kecil yang berguna</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .hero {
+    padding: 72px 0 56px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 14px 0 18px;
+    max-width: 12ch;
+  }
+  .hero p.lede {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  /* Live preview strip inside hero */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 48px;
+    align-items: center;
+  }
+  @media (max-width: 760px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  .live-card {
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+    font-family: var(--font-mono);
+  }
+  .live-card .tag {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .live-display {
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: var(--orange);
+    margin-bottom: 16px;
+    word-break: break-all;
+  }
+  .live-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .live-controls button {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 11px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .live-controls button:hover { border-color: var(--ink); }
+
+  /* Tool grid */
+  .panels {
+    padding: 56px 0 40px;
+  }
+  .panels h2 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    margin: 0 0 28px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .panel-card {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px;
+    overflow: hidden;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .panel-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--ink);
+    box-shadow: 0 8px 24px -8px rgba(28,27,26,0.18);
+  }
+  .panel-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--accent);
+  }
+  .panel-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 14px;
+  }
+  .panel-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.28rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .panel-card p {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+    max-width: 34ch;
+  }
+  .panel-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .panel-cat {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .panel-arrow {
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    transition: transform 0.18s ease;
+  }
+  .panel-card:hover .panel-arrow { transform: translateX(3px); color: var(--ink); }
+
+  .pc-1 { --accent: var(--orange); }
+  .pc-2 { --accent: var(--blue); }
+  .pc-3 { --accent: var(--green); }
+  .pc-4 { --accent: var(--orange); }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand"><span class="brand-mark"></span>Toolkit</a>
+  </div>
+</nav>
+
+<div class="shell">
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Kumpulan alat kecil — 04 panel</span>
+        <h1>Alat sehari-hari, dirakit jadi satu meja kerja.</h1>
+        <p class="lede">Setiap panel di bawah ini adalah alat berdiri sendiri — tanpa akun, tanpa loading, tinggal pakai. Dibuat sebagai latihan merancang dan merakit UI kecil yang benar-benar berfungsi.</p>
+      </div>
+      <div class="live-card">
+        <span class="tag">/// preview — password generator</span>
+        <div class="live-display" id="livePwDisplay">k7$mPz2Qx!</div>
+        <div class="live-controls">
+          <button onclick="generateLivePw()">Acak ulang</button>
+          <a href="password-generator.html" style="text-decoration:none;"><button>Buka alat &rarr;</button></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panels">
+    <h2>Pilih panel</h2>
+    <div class="grid">
+
+      <a href="unit-converter.html" class="panel-card pc-1">
+        <span class="panel-num">PANEL 01</span>
+        <h3>Unit Converter</h3>
+        <p>Ubah satuan panjang, berat, dan suhu secara langsung saat kamu mengetik.</p>
+        <div class="panel-foot">
+          <span class="panel-cat">Konversi</span>
+          <span class="panel-arrow">&rarr;</span>
+        </div>
+      </a>
+
+      <a href="password-generator.html" class="panel-card pc-2">
+        <span class="panel-num">PANEL 02</span>
+        <h3>Password Generator</h3>
+        <p>Buat kata sandi acak dengan kontrol panjang, simbol, dan angka.</p>
+        <div class="panel-foot">
+          <span class="panel-cat">Keamanan</span>
+          <span class="panel-arrow">&rarr;</span>
+        </div>
+      </a>
+
+      <a href="markdown-previewer.html" class="panel-card pc-3">
+        <span class="panel-num">PANEL 03</span>
+        <h3>Markdown Previewer</h3>
+        <p>Tulis markdown di kiri, lihat hasilnya langsung dirender di kanan.</p>
+        <div class="panel-foot">
+          <span class="panel-cat">Penulisan</span>
+          <span class="panel-arrow">&rarr;</span>
+        </div>
+      </a>
+
+      <a href="pomodoro-timer.html" class="panel-card pc-4">
+        <span class="panel-num">PANEL 04</span>
+        <h3>Pomodoro Timer</h3>
+        <p>Timer fokus 25 menit dengan jeda istirahat, lengkap dengan notifikasi.</p>
+        <div class="panel-foot">
+          <span class="panel-cat">Produktivitas</span>
+          <span class="panel-arrow">&rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <div class="shell">
+    <span>Toolkit — dirancang &amp; dirakit dengan bantuan AI</span>
+    <span>04 panel aktif</span>
+  </div>
+</footer>
+
+<script>
+function generateLivePw() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
+  let out = "";
+  for (let i = 0; i < 10; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('livePwDisplay').textContent = out;
+}
+</script>
+
+</body>
+</html>

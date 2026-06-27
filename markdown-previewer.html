@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown Previewer — Toolkit</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  :root { --accent: var(--green); }
+
+  .tool-head { padding: 40px 0 28px; border-bottom: 1px solid var(--line); }
+  .tool-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px;
+  }
+  .tool-tag::before { content:''; width: 8px; height: 8px; background: var(--accent); border-radius: 2px; }
+  .tool-head h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.4rem); margin: 0 0 8px; letter-spacing: -0.01em; }
+  .tool-head p { color: var(--ink-soft); margin: 0; max-width: 50ch; }
+
+  .tool-body { padding: 32px 0 60px; }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    height: 70vh;
+    min-height: 480px;
+  }
+  @media (max-width: 760px) {
+    .split { grid-template-columns: 1fr; height: auto; }
+    .pane { min-height: 360px; }
+  }
+
+  .pane {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+  }
+  .pane-head {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper-card);
+    flex-shrink: 0;
+  }
+
+  #mdInput {
+    flex: 1;
+    border: none;
+    resize: none;
+    padding: 18px;
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--paper);
+  }
+  #mdInput:focus { outline: none; }
+
+  #mdPreview {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 22px;
+    font-family: var(--font-body);
+    line-height: 1.65;
+  }
+  #mdPreview h1, #mdPreview h2, #mdPreview h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    margin: 0.6em 0 0.4em;
+  }
+  #mdPreview h1 { font-size: 1.8rem; }
+  #mdPreview h2 { font-size: 1.4rem; }
+  #mdPreview h3 { font-size: 1.15rem; }
+  #mdPreview p { margin: 0 0 0.8em; }
+  #mdPreview code {
+    font-family: var(--font-mono);
+    background: var(--paper-card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+  }
+  #mdPreview pre {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  #mdPreview pre code { background: none; padding: 0; color: inherit; }
+  #mdPreview blockquote {
+    border-left: 3px solid var(--accent);
+    margin: 0 0 0.8em;
+    padding: 4px 0 4px 16px;
+    color: var(--ink-soft);
+  }
+  #mdPreview ul, #mdPreview ol { margin: 0 0 0.8em; padding-left: 1.4em; }
+  #mdPreview a { color: var(--accent); text-decoration: underline; }
+  #mdPreview hr { border: none; border-top: 1px solid var(--line); margin: 1.2em 0; }
+  #mdPreview strong { font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand"><span class="brand-mark"></span>Toolkit</a>
+    <a href="index.html" class="nav-back">&larr; Semua panel</a>
+  </div>
+</nav>
+
+<div class="shell">
+
+  <header class="tool-head">
+    <span class="tool-tag">Panel 03 — Penulisan</span>
+    <h1>Markdown Previewer</h1>
+    <p>Tulis di panel kiri, hasilnya langsung dirender di panel kanan. Mendukung heading, list, code block, blockquote, dan tautan.</p>
+  </header>
+
+  <section class="tool-body">
+    <div class="split">
+      <div class="pane">
+        <div class="pane-head">Tulis markdown</div>
+        <textarea id="mdInput" spellcheck="false"></textarea>
+      </div>
+      <div class="pane">
+        <div class="pane-head">Hasil render</div>
+        <div id="mdPreview"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="site-footer">
+  <div class="shell">
+    <span>Panel 03 / 04</span>
+    <a href="index.html" style="text-decoration:none; color:inherit;">Kembali ke Toolkit</a>
+  </div>
+</footer>
+
+<script>
+const defaultText = `# Catatan harian
+
+Ini adalah **markdown previewer** sederhana. Coba edit teks ini.
+
+## Fitur yang didukung
+
+- Heading (# sampai ###)
+- *Miring* dan **tebal**
+- \`inline code\`
+- [Tautan](https://example.com)
+
+> Kutipan akan tampil seperti ini.
+
+\`\`\`
+function halo() {
+  console.log("hai");
+}
+\`\`\`
+
+---
+
+Selamat menulis!`;
+
+function renderMarkdown(text) {
+  // Escape HTML dulu supaya aman
+  let html = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Code blocks (harus diproses sebelum yang lain)
+  html = html.replace(/```([\s\S]*?)```/g, (_, code) => `<pre><code>${code.trim()}</code></pre>`);
+
+  // Headings
+  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+  // Blockquote
+  html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+
+  // Horizontal rule
+  html = html.replace(/^---$/gim, '<hr>');
+
+  // Bold & italic
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // Links
+  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  // Lists
+  html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, match => `<ul>${match}</ul>`);
+
+  // Paragraphs: bungkus baris yang belum dibungkus tag blok
+  html = html
+    .split(/\n{2,}/)
+    .map(block => {
+      const trimmed = block.trim();
+      if (!trimmed) return '';
+      if (/^<(h1|h2|h3|ul|pre|blockquote|hr)/.test(trimmed)) return trimmed;
+      return `<p>${trimmed.replace(/\n/g, '<br>')}</p>`;
+    })
+    .join('\n');
+
+  return html;
+}
+
+const mdInput = document.getElementById('mdInput');
+const mdPreview = document.getElementById('mdPreview');
+
+function update() {
+  mdPreview.innerHTML = renderMarkdown(mdInput.value);
+}
+
+mdInput.addEventListener('input', update);
+mdInput.value = defaultText;
+update();
+</script>
+
+</body>
+</html>
